@@ -16,17 +16,17 @@ const userSchema = mongoose.Schema({
   },
 });
 
-// userSchema.pre("save", async function () {
-//   this.password = await bcrypt
-//     .genSalt(10)
-//     .then((salt) => {
-//       return bcrypt.hash(this.password, salt);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-//   console.log(this.password);
-// });
+userSchema.pre("save", async function () {
+  this.password = await bcrypt
+    .genSalt(10)
+    .then((salt) => {
+      return bcrypt.hash(this.password, salt);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  // console.log(this.password);
+});
 
 userSchema.pre("insertOne", async function () {
   this.password = await bcrypt
@@ -37,7 +37,7 @@ userSchema.pre("insertOne", async function () {
     .catch((err) => {
       console.log(err);
     });
-  console.log(this.password);
+  // console.log(this.password);
 });
 
 const User = mongoose.model("User", userSchema);

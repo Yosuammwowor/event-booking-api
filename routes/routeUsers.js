@@ -1,10 +1,18 @@
 const express = require("express");
 const route = express.Router();
 
-const { getUsers, noRoutes } = require("../controllers/controllerUsers");
+const {
+  getUsers,
+  addUsers,
+  noRoutes,
+} = require("../controllers/controllerUsers");
 
 route.get("/", (req, res) => {
   getUsers(req, res);
+});
+
+route.post("/", (req, res) => {
+  addUsers(req, res);
 });
 
 route.all("/*any", (req, res) => {
