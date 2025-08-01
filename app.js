@@ -3,6 +3,8 @@ const app = express();
 
 const userRoutes = require("./routes/routeUsers");
 
+app.use(express.json());
+
 app.use("/users", userRoutes);
 
 app.listen(3000, () => {
