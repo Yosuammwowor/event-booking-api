@@ -22,6 +22,33 @@ const getEvents = async (req, res) => {
       });
 };
 
+const getEventById = async (req, res) => {
+  // check if there are input sended
+  if (req.body) {
+    return res
+      .status(401)
+      .json({ message: "Something went wrong, no input needed!" });
+  }
+
+  const { id } = req.params;
+
+  if (id.length !== 24)
+    return res.status(404).json({
+      message: "Invalied ID, provide 24 hexadecimal character!",
+    });
+
+  const result = await Event.findById(id);
+  result
+    ? res.json({
+        message: "Events request Success🙌",
+        data: result,
+      })
+    : res.status(404).json({
+        message: "Sorry, no data inside available",
+        data: result,
+      });
+};
+
 const addEvents = async (req, res) => {
   // check input sended {} or empty payloads
   if (!req.body || Object.keys(req.body).length === 0) {
@@ -64,4 +91,4 @@ const addEvents = async (req, res) => {
   });
 };
 
-module.exports = { noRoutes, getEvents, addEvents };
+module.exports = { noRoutes, getEvents, getEventById, addEvents };
