@@ -1,4 +1,5 @@
 const User = require("../model/modelUsers");
+const { isValidString, noRoutes } = require("../config/util");
 
 const getUsers = async (req, res) => {
   // This error handler use for empty payloads or {}
@@ -43,14 +44,6 @@ const addUsers = async (req, res) => {
   res
     .status(201)
     .json({ message: "User created successfully😆", data: result });
-};
-
-const isValidString = (data) => {
-  return typeof data === "string";
-};
-
-const noRoutes = (req, res) => {
-  res.status(404).json({ message: "No Route found" });
 };
 
 module.exports = { getUsers, addUsers, noRoutes };
