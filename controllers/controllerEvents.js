@@ -10,10 +10,16 @@ const getEvents = async (req, res) => {
   }
   const result = await Event.find();
   result.length !== 0
-    ? res.json({ message: "Events request Success🙌", data: result })
-    : res
-        .status(404)
-        .json({ message: "Sorry, no data inside available", data: result });
+    ? res.json({
+        message: "Events request Success🙌",
+        data: result,
+        length: result.length,
+      })
+    : res.status(404).json({
+        message: "Sorry, no data inside available",
+        data: result,
+        length: result.length,
+      });
 };
 
 const addEvents = async (req, res) => {
@@ -25,6 +31,12 @@ const addEvents = async (req, res) => {
   }
 
   const { title, date, location, price, quota } = req.body;
+  // check if there's no data sended
+  if (!title || !date | !location || !price || !quota)
+    return res
+      .status(400)
+      .json({ message: "Please provide every necessary input needed!" });
+
   // check values type data
   if (
     !isValidString(title) ||
@@ -32,11 +44,10 @@ const addEvents = async (req, res) => {
     !isValidString(location) ||
     !isValidNumber(price) ||
     !isValidNumber(quota)
-  ) {
+  )
     return res.status(400).json({
       message: "Something went wrong, please check your input data type!",
     });
-  }
 
   const newEvent = new Event({
     title: title,
@@ -47,9 +58,10 @@ const addEvents = async (req, res) => {
   });
 
   const result = await newEvent.save();
-  res
-    .status(201)
-    .json({ message: "User created successfully😆", data: result });
+  res.status(201).json({
+    message: "User created successfully😆",
+    data: result,
+  });
 };
 
 module.exports = { noRoutes, getEvents, addEvents };
