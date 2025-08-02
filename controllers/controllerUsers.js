@@ -23,7 +23,7 @@ const addUsers = async (req, res) => {
 
   const { name, email, password } = req.body;
 
-  // check key data type
+  // check values data type
   if (
     !isValidString(name) ||
     !isValidString(email) ||
