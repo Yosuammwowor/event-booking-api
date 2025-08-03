@@ -6,6 +6,7 @@ const {
   getEvents,
   getEventById,
   addEvents,
+  deleteEventById,
 } = require("../controllers/controllerEvents");
 
 route.get("/", (req, res) => {
@@ -18,6 +19,10 @@ route.get("/:id", (req, res) => {
 
 route.post("/", (req, res) => {
   addEvents(req, res);
+});
+
+route.delete("/:id", (req, res) => {
+  deleteEventById(req, res);
 });
 
 route.all("/*any", (req, res) => {

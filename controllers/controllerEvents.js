@@ -91,4 +91,39 @@ const addEvents = async (req, res) => {
   });
 };
 
-module.exports = { noRoutes, getEvents, getEventById, addEvents };
+const deleteEventById = async (req, res) => {
+  // check if there's data sended
+  if (req.body)
+    return res
+      .status(401)
+      .json({ message: "Something went wrong, no input needed!" });
+
+  // get id sended
+  const { id } = req.params;
+
+  // check if id isnt a 24 hexadecimal character
+  if (id.length !== 24)
+    return res
+      .status(404)
+      .json({ message: "Invalud ID, provide 24 hexadecimal character!" });
+
+  // proceed with delete data by id
+  const result = await Event.findByIdAndDelete(id);
+  result
+    ? res.json({
+        message: "Data deleted Success👌",
+        data: result,
+      })
+    : res.status(404).json({
+        message: "Sorry, no data inside available",
+        data: result,
+      });
+};
+
+module.exports = {
+  noRoutes,
+  getEvents,
+  getEventById,
+  addEvents,
+  deleteEventById,
+};
