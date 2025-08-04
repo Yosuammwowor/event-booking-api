@@ -9,7 +9,7 @@ const getEvents = async (req, res) => {
       .json({ message: "Something went wrong, no input needed!" });
   }
   const result = await Event.find();
-  result.length !== 0
+  result
     ? res.json({
         message: "Events request Success🙌",
         data: result,
