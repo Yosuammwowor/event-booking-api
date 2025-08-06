@@ -1,5 +1,5 @@
 const Booking = require("../model/modelBookings");
-const { noRoutes } = require("../config/util");
+const { noRoutes, isValidNumber, isValidString } = require("../config/util");
 
 const getBookings = async (req, res) => {
   // check if there's data sended
@@ -50,4 +50,73 @@ const getBookingById = async (req, res) => {
         .json({ message: "Sorry, no data inside available", data: result });
 };
 
-module.exports = { noRoutes, getBookings, getBookingById };
+const addBookings = async (req, res) => {
+  // check if data sended {} or empty payloads
+  if (!req.body || Object.keys(req.body).length === 0)
+    return res.status(401).json({
+      message: "Something went wrong, please check your input sended!",
+    });
+
+  const { userId, eventId, totalTicket, bookedAt } = req.body;
+
+  // check if empty values
+  if (!userId || !eventId || !totalTicket || !bookedAt)
+    return res.status(400).json({
+      message: "Please provide every necessary input!",
+    });
+
+  // check userId and eventId values length AND data types
+  if (
+    (userId.length !== 24 && eventId.length !== 24) ||
+    !isValidString(userId) ||
+    !isValidString(eventId)
+  )
+    return res.status(400).json({
+      message:
+        "Invalid ID, please provide userId and eventId 24 hexadecimal character!",
+    });
+
+  // check data types
+  if (!isValidNumber(totalTicket) || !isValidString(bookedAt))
+    return res
+      .status(400)
+      .json({ message: "Something went wrong, check your values data type!" });
+
+  // proceed making data object
+  const newBooking = new Booking({
+    userId: userId,
+    eventId: eventId,
+  });
+
+  const detailBooking = await newBooking.populate(["userId", "eventId"]);
+
+  // check userId relationship
+  if (!detailBooking.userId)
+    return res.status(400).json({ message: "No userId inside database!" });
+
+  // check eventId relationship
+  if (!detailBooking.eventId)
+    return res.status(400).json({ message: "No eventId inside database!" });
+
+  // check totalTicket over limit or not
+  if (totalTicket > detailBooking.eventId.quota)
+    return res.status(400).json({
+      message: `Total ticket over the quota limit, remaining tickets: ${detailBooking.eventId.quota}`,
+    });
+
+  // proceed data transmition
+  detailBooking.eventId.quota -= totalTicket;
+  newBooking.totalPrice = detailBooking.eventId.price * totalTicket;
+  newBooking.totalTicket = totalTicket;
+  newBooking.bookedAt = bookedAt;
+
+  await detailBooking.eventId.save();
+  await newBooking.save();
+
+  res.status(201).json({
+    message: "Data successfully Added❤️",
+    data: newBooking,
+  });
+};
+
+module.exports = { noRoutes, getBookings, getBookingById, addBookings };

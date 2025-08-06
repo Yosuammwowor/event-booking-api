@@ -24,12 +24,11 @@ const eventSchema = mongoose.Schema({
 });
 
 eventSchema.pre("save", function () {
-  if (typeof this.date === "string") {
-    const year = this.date.getFullYear();
-    const month = this.date.getMonth();
-    const date = this.date.getDate();
-    this.date = new Date(year, month, date + 1);
-  }
+  const year = this.date.getFullYear();
+  const month = this.date.getMonth();
+  const date = this.date.getDate();
+  this.date = new Date(year, month, date + 1);
+
   // console.log(this);
 });
 

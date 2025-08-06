@@ -31,8 +31,7 @@ bookingSchema.pre("save", function () {
   const year = this.bookedAt.getFullYear();
   const month = this.bookedAt.getMonth();
   const date = this.bookedAt.getDate();
-  this.bookedAt = `${year}-${month}-${date}`;
-  console.log(this.bookedAt);
+  this.bookedAt = new Date(year, month, date + 1);
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
